@@ -18,10 +18,10 @@ export default function Header() {
 
         <nav className="hidden md:flex gap-8 text-sm font-medium">
           <Link href="/" className="hover:text-primary transition-colors">Início</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Moda Praia</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Vestuário</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Acessórios</Link>
-          <Link href="#" className="hover:text-primary transition-colors">Sob Encomenda</Link>
+          <Link href="/categoria/moda-praia" className="hover:text-primary transition-colors">Moda Praia</Link>
+          <Link href="/categoria/vestuario" className="hover:text-primary transition-colors">Vestuário</Link>
+          <Link href="/categoria/acessorios" className="hover:text-primary transition-colors">Acessórios</Link>
+          <Link href="/sob-encomenda" className="hover:text-primary transition-colors">Sob Encomenda</Link>
         </nav>
 
         <div className="flex items-center gap-5">

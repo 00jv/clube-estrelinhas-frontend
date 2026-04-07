@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { products } from '@/data/mock';
+import ReviewsCarousel from '@/components/ReviewsCarousel';
 
 export default function Home() {
   return (
@@ -112,6 +113,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ReviewsCarousel />
 
       {/* Newsletter / CTA */}
       <section className="w-full py-32 bg-zinc-900 text-white flex justify-center border-t-8 border-primary">

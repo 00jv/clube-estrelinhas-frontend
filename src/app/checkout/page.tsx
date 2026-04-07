@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col pt-8 pb-32">
       <div className="container mx-auto px-4 lg:max-w-6xl">
-        
+
         {/* Header Checkout */}
         <header className="flex items-center justify-between mb-12">
           <Link href="/" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 transition-colors text-xs font-bold uppercase tracking-widest">
@@ -33,10 +33,10 @@ export default function CheckoutPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          
+
           {/* Left Column: Forms */}
           <div className="lg:col-span-7 flex flex-col gap-8">
-            
+
             {/* Step 1 */}
             <section className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-zinc-100">
               <div className="flex items-center gap-4 mb-8 border-b border-zinc-100 pb-4">
@@ -63,11 +63,13 @@ export default function CheckoutPage() {
               </div>
             </section>
 
-             {/* Step 2 */}
+            {/* Step 2 */}
             <section className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-zinc-100">
               <div className="flex items-center gap-4 mb-8 border-b border-zinc-100 pb-4">
                 <div className="w-8 h-8 rounded-full bg-zinc-900 text-primary flex items-center justify-center font-bold text-sm">2</div>
-                <h2 className="font-serif text-2xl font-bold text-zinc-900">Endereço de Entrega</h2>
+                <h2 className="font-serif text-2xl font-bold text-zinc-9
+                
+                00">Endereço de Entrega</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
@@ -104,14 +106,14 @@ export default function CheckoutPage() {
                 <h2 className="font-serif text-2xl font-bold text-zinc-900">Método de Pagamento</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                <button 
+                <button
                   onClick={() => setPaymentMethod("credit_card")}
                   className={`flex flex-col items-center justify-center gap-3 p-6 rounded-3xl border-2 transition-all ${paymentMethod === 'credit_card' ? 'border-primary bg-primary/5 shadow-inner' : 'border-zinc-100 hover:border-zinc-300'}`}
                 >
                   <CreditCard className={`w-8 h-8 ${paymentMethod === 'credit_card' ? 'text-primary' : 'text-zinc-400'}`} />
                   <span className={`font-bold text-xs uppercase tracking-widest ${paymentMethod === 'credit_card' ? 'text-zinc-900' : 'text-zinc-400'}`}>Cartão de Crédito</span>
                 </button>
-                <button 
+                <button
                   onClick={() => setPaymentMethod("pix")}
                   className={`flex flex-col items-center justify-center gap-3 p-6 rounded-3xl border-2 transition-all ${paymentMethod === 'pix' ? 'border-primary bg-primary/5 shadow-inner' : 'border-zinc-100 hover:border-zinc-300'}`}
                 >
@@ -147,7 +149,7 @@ export default function CheckoutPage() {
           <div className="lg:col-span-5 relative">
             <div className="sticky top-8 bg-zinc-900 text-white p-8 md:p-10 rounded-[2.5rem] shadow-2xl flex flex-col gap-8">
               <h2 className="font-serif text-3xl font-bold tracking-tighter">Resumo do Pedido</h2>
-              
+
               <div className="flex flex-col gap-6 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                 {items.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-10 opacity-50">
@@ -182,7 +184,7 @@ export default function CheckoutPage() {
                   <span className="uppercase tracking-widest text-xs font-bold">Frete Expesso</span>
                   <span className="text-primary font-bold">Grátis</span>
                 </div>
-                
+
                 <div className="flex justify-between items-end mt-4 pt-6 border-t border-zinc-800">
                   <span className="text-zinc-200 text-xs font-bold uppercase tracking-widest">Total Geração</span>
                   <span className="font-serif text-4xl text-primary font-bold tracking-tighter leading-none">
@@ -191,7 +193,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <button 
+              <button
                 className="w-full bg-primary hover:bg-primary-dark text-zinc-900 font-bold py-5 rounded-full mt-4 flex items-center justify-center gap-2 transition-all shadow-[0_0_30px_rgba(0,229,255,0.15)] hover:shadow-[0_0_40px_rgba(0,229,255,0.3)] disabled:opacity-50 disabled:shadow-none disabled:hover:bg-primary disabled:translate-y-0 hover:-translate-y-1 uppercase tracking-widest text-sm"
                 disabled={items.length === 0}
               >
