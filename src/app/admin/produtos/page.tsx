@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Pencil, Trash2, Package } from "lucide-react";
 import { products } from "@/data/mock";
 
 export default function ProductsListAdmin() {
