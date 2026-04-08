@@ -6,6 +6,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+
+function resolveImageUrl(image: string): string {
+  if (!image) return '';
+  if (image.startsWith('http')) return image;
+  if (image.startsWith('/uploads/')) return `${API_URL}${image}`;
+  return image;
+}
+
 export default function MiniCart() {
   const { items, isOpen, closeCart, updateQuantity, removeItem } = useCartStore();
   const [mounted, setMounted] = useState(false);
@@ -51,7 +60,7 @@ export default function MiniCart() {
             items.map((item) => (
               <div key={item.id} className="flex gap-4 p-4 border border-zinc-100 rounded-2xl">
                 <div className="relative w-24 h-24 bg-zinc-50 rounded-lg overflow-hidden shrink-0">
-                  <Image src={item.image} alt={item.name} fill className="object-cover" />
+                  <Image src={resolveImageUrl(item.image)} alt={item.name} fill unoptimized className="object-cover" />
                 </div>
                 <div className="flex flex-col flex-1 justify-between">
                   <div>
@@ -97,17 +106,18 @@ export default function MiniCart() {
         </div>
 
         {items.length > 0 && (
-          <div className="p-6 border-t border-zinc-100 bg-zinc-50/50">
-            <div className="flex justify-between items-end mb-6">
-              <span className="text-zinc-500 uppercase tracking-widest font-bold text-xs">Subtotal</span>
-              <span className="font-serif text-2xl font-bold text-zinc-900">
+          <div className="p-6 border-t border-zinc-100 bg-white">
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-zinc-500 font-medium">Subtotal</span>
+              <span className="text-2xl font-bold text-zinc-900">
                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subtotal)}
               </span>
             </div>
+            
             <Link 
               href="/checkout"
               onClick={closeCart}
-              className="w-full bg-primary hover:bg-primary-dark text-zinc-900 font-bold py-4 rounded-full flex items-center justify-center transition-colors shadow-lg shadow-primary/20 uppercase tracking-wide text-sm"
+              className="w-full flex items-center justify-center gap-2 bg-zinc-900 text-white p-4 rounded-2xl font-bold hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-200 active:scale-[0.98]"
             >
               Finalizar Compra
             </Link>

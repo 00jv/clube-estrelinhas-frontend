@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, PackagePlus, LogOut, Package, Settings, ArrowLeft } from "lucide-react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { LayoutDashboard, PackagePlus, LogOut, Package, Settings, ArrowLeft, ShoppingBag } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
-export default function AdminLayout({
+export default function AdminLayoutClient({
   children,
 }: {
   children: React.ReactNode;
@@ -12,10 +13,12 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   const links = [
-    { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/admin/produtos", label: "Seus Produtos", icon: Package },
-    { href: "/admin/produtos/novo", label: "Adicionar Produto", icon: PackagePlus },
-    { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
+    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/produtos', label: 'Produtos', icon: Package },
+    { href: '/admin/pedidos', label: 'Pedidos', icon: ShoppingBag },
+    { href: '/admin/clientes', label: 'Clientes', icon: PackagePlus },
+    { href: '/admin/categorias', label: 'Categorias', icon: Settings },
+    { href: '/admin/configuracoes', label: 'Configurações', icon: Settings },
   ];
 
   return (
@@ -36,8 +39,8 @@ export default function AdminLayout({
                 href={link.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                   isActive
-                    ? "bg-primary/20 text-primary-dark font-medium"
-                    : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                    ? 'bg-primary/20 text-primary-dark font-medium'
+                    : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" /> {link.label}
@@ -45,10 +48,16 @@ export default function AdminLayout({
             );
           })}
         </nav>
-        <div className="p-4 border-t border-zinc-800">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-zinc-800 rounded-xl transition-colors">
-            <LogOut className="w-5 h-5" /> Sair da Loja
+        <div className="p-4 border-t border-zinc-800 flex flex-col gap-2">
+          <Link href="/" className="flex items-center gap-3 px-4 py-3 text-zinc-400 hover:bg-zinc-800 rounded-xl transition-colors">
+            <ArrowLeft className="w-5 h-5" /> Ver Loja
           </Link>
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-zinc-800 rounded-xl transition-colors w-full text-left"
+          >
+            <LogOut className="w-5 h-5" /> Sair
+          </button>
         </div>
       </aside>
 

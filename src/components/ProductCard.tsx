@@ -1,15 +1,26 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Product } from '@/data/mock';
+import { Product } from '@/lib/api';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+
+function resolveImageUrl(image: string): string {
+  if (image.startsWith('http')) return image;
+  // If image is a path like /uploads/... it comes from backend static files
+  if (image.startsWith('/uploads/')) return `${API_URL}${image}`;
+  // Local public assets from Next.js public folder
+  return image;
+}
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/produto/${product.slug}`} className="group flex flex-col gap-5">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-100 rounded-2xl">
         <Image
-          src={product.image}
+          src={resolveImageUrl(product.image)}
           alt={product.name}
           fill
+          unoptimized
           className="object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
         />
         {product.tag && (

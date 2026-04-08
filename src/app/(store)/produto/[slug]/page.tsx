@@ -1,16 +1,26 @@
 "use client";
 
-import { use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ShoppingBag, Heart, Truck, X } from "lucide-react";
-import { products } from "@/data/mock";
+import { getProductBySlug, Product } from "@/lib/api";
+import { ShoppingBag, Heart, Truck, X, Loader2 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
-import { useState } from "react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3333';
+
+function resolveImageUrl(image: string): string {
+  if (!image) return '';
+  if (image.startsWith('http')) return image;
+  if (image.startsWith('/uploads/')) return `${API_URL}${image}`;
+  return image;
+}
 
 export default function ProductPage(props: { params: Promise<{ slug: string }> }) {
   const params = use(props.params);
-  const product = products.find((p) => p.slug === params.slug);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const addItem = useCartStore((state) => state.addItem);
 
   const [selectedSize, setSelectedSize] = useState("36");
@@ -19,6 +29,23 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
   const [customColor, setCustomColor] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (params.slug) {
+      getProductBySlug(params.slug)
+        .then(setProduct)
+        .catch(() => setProduct(null))
+        .finally(() => setIsLoading(false));
+    }
+  }, [params.slug]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex items-center justify-center h-[60vh]">
+        <Loader2 className="w-10 h-10 text-zinc-300 animate-spin" />
+      </div>
+    );
+  }
+
   if (!product) {
     return notFound();
   }
@@ -26,7 +53,7 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
   const isClothing = !product.category.toLowerCase().includes('acessório') && !product.name.toLowerCase().includes('bolsa');
 
   const handleAddToCart = () => {
-    addItem(product, 1);
+    addItem(product as any, 1);
   };
 
   return (
@@ -46,7 +73,7 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
             <div className="w-20 hidden md:flex flex-col gap-4">
               {[1, 2, 3].map((_, idx) => (
                 <div key={idx} className={`relative w-20 h-24 bg-zinc-100 rounded-lg overflow-hidden cursor-pointer border-2 ${idx === 0 ? 'border-primary' : 'border-transparent'}`}>
-                  <Image src={product.image} alt="Thumb" fill className="object-cover" />
+                  <Image src={resolveImageUrl(product.image)} alt="Thumb" fill unoptimized className="object-cover" />
                 </div>
               ))}
             </div>
@@ -57,7 +84,7 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
                   {product.tag}
                 </span>
               )}
-              <Image src={product.image} alt={product.name} fill className="object-cover object-top" priority />
+              <Image src={resolveImageUrl(product.image)} alt={product.name} fill unoptimized className="object-cover object-top" priority />
             </div>
           </div>
 
@@ -188,9 +215,10 @@ export default function ProductPage(props: { params: Promise<{ slug: string }> }
             
             <div className="relative aspect-square w-full max-w-sm ml-auto bg-zinc-100 rounded-[2rem] overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-500 shadow-xl">
               <Image 
-                src={product.image} 
+                src={resolveImageUrl(product.image)} 
                 alt={`Detalhe feito a mão de ${product.name}`} 
                 fill 
+                unoptimized
                 className="object-contain p-8 drop-shadow-2xl"
               />
             </div>

@@ -2,10 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import { products } from '@/data/mock';
 import ReviewsCarousel from '@/components/ReviewsCarousel';
+import { getProducts } from '@/lib/api';
 
-export default function Home() {
+export default async function Home() {
+  const products = await getProducts().catch(() => []);
   return (
     <div className="w-full flex-col flex items-center">
       {/* Hero Section */}
@@ -57,7 +58,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
+            {products.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

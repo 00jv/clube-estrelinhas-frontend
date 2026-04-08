@@ -1,13 +1,8 @@
 import { use } from "react";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/mock";
-
-const categoryMap: Record<string, string> = {
-  "acessorios": "Acessórios",
-  "vestuario": "Vestuário",
-  "moda-praia": "Moda Praia"
-};
+import { getProducts } from "@/lib/api";
+import { slugify } from "@/lib/slugify";
 
 const categoryDescriptions: Record<string, string> = {
   "acessorios": "Complete seu look com bolsas e peças exclusivas feitas à mão.",
@@ -15,20 +10,22 @@ const categoryDescriptions: Record<string, string> = {
   "moda-praia": "Viva o frescor do litoral com peças em trama macia que abraçam o corpo com elegância."
 };
 
-export default function CategoryPage(props: { params: Promise<{ slug: string }> }) {
-  const params = use(props.params);
+export default async function CategoryPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const slug = params.slug;
 
-  const categoryTitle = categoryMap[slug];
+  // Fetch unique categories to find the real name for this slug
+  const allProductsMain = await getProducts().catch(() => []);
+  const uniqueCategories = Array.from(new Set(allProductsMain.map(p => p.category)));
+  
+  const categoryTitle = uniqueCategories.find(cat => slugify(cat) === slug);
 
   if (!categoryTitle) {
     return notFound();
   }
 
-  // Filtrar os produtos da categoria
-  const categoryProducts = products.filter(
-    (product) => product.category === categoryTitle
-  );
+  const allProducts = await getProducts({ category: categoryTitle }).catch(() => []);
+  const categoryProducts = allProducts;
 
   return (
     <div className="w-full pb-32">
@@ -39,7 +36,7 @@ export default function CategoryPage(props: { params: Promise<{ slug: string }> 
         </h1>
         <p className="text-zinc-500 max-w-xl text-lg relative">
           <span className="absolute -left-6 top-0 text-3xl text-primary/30 font-serif">"</span>
-          {categoryDescriptions[slug]}
+          {categoryDescriptions[slug] || `Descubra nossa coleção exclusiva de ${categoryTitle.toLowerCase()}, feita com carinho e dedicação artesanal.`}
           <span className="absolute -right-6 bottom-0 text-3xl text-primary/30 font-serif">"</span>
         </p>
       </section>
