@@ -10,7 +10,7 @@ import {
   Home, Hash, Building2, Map,
   ChevronRight, LogOut, ShoppingBag,
   Clock, CreditCard, Package, Truck,
-  CheckCircle2, XCircle
+  CheckCircle2, XCircle, X
 } from 'lucide-react';
 import { getProfile, updateProfile, getMyOrders, Order } from '@/lib/api';
 
@@ -84,6 +84,160 @@ function OrderStatusStepper({ currentStatus }: { currentStatus: string }) {
   );
 }
 
+function OrderModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-300">
+      <div 
+        className="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity" 
+        onClick={onClose}
+      />
+      
+      <div className="relative w-full max-w-3xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 slide-in-from-bottom-8 duration-500">
+        {/* Header */}
+        <div className="bg-zinc-900 text-white p-8 md:p-10 relative overflow-hidden flex-shrink-0">
+          <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl opacity-50"></div>
+          
+          <button 
+            onClick={onClose}
+            className="absolute right-6 top-6 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors group z-10"
+          >
+            <X className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          </button>
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-zinc-900">
+                  <ShoppingBag className="w-4 h-4" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary/80">Detalhes do Pedido</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-serif font-bold italic leading-none">
+                #{(order.id as string).split('-')[0].toUpperCase()}
+              </h2>
+            </div>
+            
+            <div className="flex flex-col items-end">
+              <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                order.status === 'PAID' ? 'bg-green-500/20 text-green-400' :
+                order.status === 'PENDING' ? 'bg-amber-500/20 text-amber-400' :
+                'bg-zinc-700 text-zinc-400'
+              }`}>
+                {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Pendente' : order.status}
+              </span>
+              <p className="text-zinc-400 text-xs mt-2 font-medium">Realizado em {new Date(order.createdAt).toLocaleDateString('pt-BR')}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-8 md:p-10 custom-scrollbar">
+          <div className="space-y-12">
+            
+            {/* Status Stepper */}
+            <div className="bg-zinc-50 rounded-[2rem] p-8 border border-zinc-100/50">
+              <OrderStatusStepper currentStatus={order.status} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              {/* Items List */}
+              <div className="space-y-6">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                  <Package className="w-4 h-4" /> Itens da Compra
+                </h3>
+                <div className="space-y-4">
+                  {order.items.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-4 group">
+                      <div className="w-20 h-20 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-50 flex-shrink-0 shadow-sm">
+                        {item.product && (
+                          <img 
+                            src={resolveImageUrl(item.product.image)} 
+                            alt={item.product.name} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-zinc-900 leading-tight">{item.product?.name || 'Produto'}</h4>
+                        <p className="text-xs text-zinc-400 mt-1">{item.quantity}un × {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-zinc-900">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price * item.quantity)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shipping & Measurements */}
+              <div className="space-y-8">
+                {/* Address */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                    <MapPin className="w-4 h-4" /> Endereço de Entrega
+                  </h3>
+                  <div className="bg-zinc-50 rounded-2xl p-6 border border-zinc-100/50">
+                    {order.street ? (
+                      <address className="not-italic text-sm text-zinc-600 leading-relaxed">
+                        <span className="font-bold text-zinc-900">{order.street}, {order.number}</span><br />
+                        {order.complement && <span className="text-xs">{order.complement}<br /></span>}
+                        {order.neighborhood}<br />
+                        {order.city} - {order.state}<br />
+                        <span className="font-mono text-xs">{order.zipCode}</span>
+                      </address>
+                    ) : (
+                      <p className="text-sm text-zinc-400 italic">Endereço não disponível.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Measurements */}
+                {(order.bust || order.waist || order.hips) && (
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                       <Ruler className="w-4 h-4" /> Medidas do Pedido
+                    </h3>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-zinc-900 rounded-2xl p-4 text-center">
+                        <p className="text-[8px] font-bold text-primary/60 uppercase tracking-tighter">Busto</p>
+                        <p className="text-lg font-bold text-white leading-none mt-1">{order.bust || '—'} <span className="text-[10px] opacity-40 font-normal">cm</span></p>
+                      </div>
+                      <div className="bg-zinc-900 rounded-2xl p-4 text-center">
+                        <p className="text-[8px] font-bold text-primary/60 uppercase tracking-tighter">Cintura</p>
+                        <p className="text-lg font-bold text-white leading-none mt-1">{order.waist || '—'} <span className="text-[10px] opacity-40 font-normal">cm</span></p>
+                      </div>
+                      <div className="bg-zinc-900 rounded-2xl p-4 text-center">
+                        <p className="text-[8px] font-bold text-primary/60 uppercase tracking-tighter">Quadril</p>
+                        <p className="text-lg font-bold text-white leading-none mt-1">{order.hips || '—'} <span className="text-[10px] opacity-40 font-normal">cm</span></p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer / Total */}
+        <div className="bg-zinc-50 p-8 md:px-10 md:py-8 border-t border-zinc-100 flex items-center justify-between flex-shrink-0">
+          <div>
+            <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Valor Total Pago</p>
+            <p className="text-3xl font-serif font-bold text-zinc-900 italic">
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(order.totalAmount)}
+            </p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="px-8 py-4 bg-zinc-900 text-white rounded-2xl font-bold shadow-lg shadow-zinc-200 transition-all active:scale-95 text-sm"
+          >
+            Fechar Detalhes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -93,6 +247,7 @@ export default function ProfilePage() {
   const [isFetchingCep, setIsFetchingCep] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -636,8 +791,11 @@ export default function ProfilePage() {
                           </div>
 
                           <div className="flex items-center justify-end">
-                            <button className="flex items-center gap-2 text-zinc-400 font-bold text-sm hover:text-zinc-900 transition-colors">
-                              Ver detalhes <ChevronRight className="w-4 h-4" />
+                            <button 
+                              onClick={() => setSelectedOrder(order)}
+                              className="flex items-center gap-2 text-zinc-400 font-bold text-sm hover:text-zinc-900 transition-colors group"
+                            >
+                              Ver detalhes <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </button>
                           </div>
                         </div>
@@ -661,6 +819,14 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Detalhes */}
+      {selectedOrder && (
+        <OrderModal 
+          order={selectedOrder} 
+          onClose={() => setSelectedOrder(null)} 
+        />
+      )}
     </div>
   );
 }

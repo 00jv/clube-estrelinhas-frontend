@@ -113,7 +113,7 @@ export default function OrderDetailsAdmin() {
                 Confirmar Pagamento
               </button>
             )}
-            {order.status === 'PAID' && (
+            {(order.status === 'PAID' || order.status === 'PENDING') && (
               <button
                 onClick={() => handleStatusChange('PREPARING')}
                 disabled={isUpdating}
@@ -133,7 +133,7 @@ export default function OrderDetailsAdmin() {
                 Marcar como Enviado
               </button>
             )}
-            {order.status === 'SHIPPED' && (
+            {(order.status === 'SHIPPED' || order.status === 'PREPARING') && (
               <button
                 onClick={() => handleStatusChange('COMPLETED')}
                 disabled={isUpdating}

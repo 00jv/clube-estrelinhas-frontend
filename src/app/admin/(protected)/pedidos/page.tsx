@@ -9,6 +9,8 @@ import Link from 'next/link';
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   PENDING:   { label: 'Pendente',   color: 'bg-yellow-100 text-yellow-700' },
   PAID:      { label: 'Pago',       color: 'bg-blue-100 text-blue-700' },
+  PREPARING: { label: 'Em Produção', color: 'bg-purple-100 text-purple-700' },
+  SHIPPED:   { label: 'Enviado',    color: 'bg-cyan-100 text-cyan-700' },
   COMPLETED: { label: 'Entregue',   color: 'bg-green-100 text-green-700' },
   CANCELLED: { label: 'Cancelado',  color: 'bg-red-100 text-red-700' },
 };
@@ -96,8 +98,8 @@ export default function OrdersAdminPage() {
                           <Loader2 className="w-4 h-4 animate-spin text-zinc-400" />
                         ) : (
                           <div className="relative inline-flex items-center">
-                            <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest ${STATUS_LABELS[order.status]?.color}`}>
-                              {STATUS_LABELS[order.status]?.label}
+                            <span className={`px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-widest ${STATUS_LABELS[order.status]?.color || 'bg-zinc-100 text-zinc-500'}`}>
+                              {STATUS_LABELS[order.status]?.label || order.status}
                             </span>
                             <div className="ml-2 relative">
                               <select
@@ -107,6 +109,8 @@ export default function OrdersAdminPage() {
                               >
                                 <option value="PENDING">Pendente</option>
                                 <option value="PAID">Pago</option>
+                                <option value="PREPARING">Produção</option>
+                                <option value="SHIPPED">Enviado</option>
                                 <option value="COMPLETED">Entregue</option>
                                 <option value="CANCELLED">Cancelado</option>
                               </select>

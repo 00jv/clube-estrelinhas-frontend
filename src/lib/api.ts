@@ -188,6 +188,21 @@ export interface Order {
   customerName: string;
   email?: string | null;
   phone?: string | null;
+  
+  // Address
+  zipCode?: string | null;
+  street?: string | null;
+  number?: string | null;
+  complement?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?: string | null;
+
+  // Measurements
+  bust?: number | null;
+  waist?: number | null;
+  hips?: number | null;
+
   totalAmount: number;
   status: 'PENDING' | 'PAID' | 'PREPARING' | 'SHIPPED' | 'COMPLETED' | 'CANCELLED';
   createdAt: string;
