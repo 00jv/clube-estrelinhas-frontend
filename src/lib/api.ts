@@ -106,8 +106,7 @@ export async function getDashboardStats(token: string) {
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
 export async function loginUser(email: string, password: string) {
-  const API = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:3333';
-  const res = await fetch(`${API}/api/auth/login`, {
+  const res = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
